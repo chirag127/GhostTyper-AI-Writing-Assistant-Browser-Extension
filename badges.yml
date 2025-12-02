@@ -1,0 +1,33 @@
+---
+# Badges configuration for Shields.io
+# https://shields.io/
+
+badges:
+  - name: "Build Status"
+    description: "GitHub Actions Build Status"
+    image: "https://img.shields.io/github/actions/workflow/user/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension/ci.yml?branch=main&style=flat-square"
+    url: "https://github.com/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension/actions/workflows/ci.yml"
+  - name: "Code Coverage"
+    description: "Code Coverage Report"
+    image: "https://img.shields.io/codecov/c/github/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension?style=flat-square"
+    url: "https://codecov.io/gh/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension"
+  - name: "Tech Stack (JS)"
+    description: "Primary Language: JavaScript"
+    image: "https://img.shields.io/badge/Language-JavaScript-F7DF1E?style=flat-square"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+  - name: "Tech Stack (Extension API)"
+    description: "Browser Extension API"
+    image: "https://img.shields.io/badge/Extension%20API-WebExtensions-0077B6?style=flat-square"
+    url: "https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions"
+  - name: "Linting/Formatting (Biome)"
+    description: "Code linting and formatting with Biome"
+    image: "https://img.shields.io/badge/Code%20Style-Biome-02569B?style=flat-square"
+    url: "https://biomejs.dev/"
+  - name: "License"
+    description: "License: CC BY-NC 4.0"
+    image: "https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgray?style=flat-square"
+    url: "https://creativecommons.org/licenses/by-nc/4.0/"
+  - name: "GitHub Stars"
+    description: "Number of GitHub Stars"
+    image: "https://img.shields.io/github/stars/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension?style=flat-square&logo=github"
+    url: "https://github.com/chirag127/GhostTyper-AI-Writing-Assistant-Browser-Extension/"
