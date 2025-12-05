@@ -1,0 +1,75 @@
+name: CI
+
+# Controls when the workflow will run
+# For more information see: https://docs.github.com/en/actions/using-workflows/on
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This job builds and tests the code
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm' # Cache npm dependencies
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+        # Using 'npm ci' for faster, more reliable installations in CI environments
+        # It ensures that dependencies match the package-lock.json exactly.
+
+      - name: Lint with Biome
+        run: npx @biomejs/biome format --check .
+        # This step ensures code is correctly formatted according to Biome standards.
+
+      - name: Lint with Biome (Code Style)
+        run: npx @biomejs/biome lint --apply --unsafe-ignore "no-unused-catch-binding" .
+        # This step applies Biome's linting rules and attempts to fix them. 
+        # "no-unused-catch-binding" is ignored as it's common in JS error handling.
+
+      - name: Build Extension
+        run: npm run build --if-present
+        # This step executes the build script defined in package.json. 
+        # '--if-present' ensures it only runs if a 'build' script exists.
+        env:
+          NODE_ENV: production
+
+      - name: Run Unit Tests with Vitest
+        run: npm test
+        # This executes the test suite using Vitest, as configured in package.json.
+        # Assumes 'npm test' is mapped to a Vitest command.
+
+      # Optional: E2E Tests with Playwright (if applicable)
+      # - name: Install Playwright Browsers
+      #   run: npx playwright install
+      # - name: Run E2E Tests with Playwright
+      #   run: npm run test:e2e # Assuming a script for E2E tests exists
+      #   env:
+      #     CI: true # Essential for Playwright to run correctly in CI
+
+      # Optional: Upload artifacts (e.g., build outputs)
+      # - name: Upload Build Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: GhostTyper-Extension-Build
+      #     path: dist/ # Adjust path based on your build output directory
+
+      # Note: This CI setup is designed for a JavaScript/TypeScript browser extension. 
+      # For other stacks (e.g., Python, Rust), the steps would differ significantly.
+      # The current setup assumes standard npm build/test scripts.
