@@ -1,72 +1,52 @@
-# Dependencies
-node_modules/
+# Node.js and npm package manager
+
+npm-debug.log*
 npm-debug.log
-yarn-debug.log
-yarn-error.log
-pnpm-debug.log
+npm-shrinkwrap.json
+yarn-error.log*
+node_modules/
+*.local
+
+# General
+.DS_Store
+Thumbs.db
 
 # Build output
-dist/
-build/
-.next/
-.nuxt/
-next/
-nuxt/
-out/
+/dist
+/build
+/out
 
-# Vite
-.vite/
+# IDE specific
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.suo
+*.user
+*.userossc
+*.sln
+*.sdf
+*.vcxproj
+*.opensdf
 
 # Logs
 logs
 *.log
-npm-log.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
 
 # Runtime data
-.env
-.env.*
-!.env.example
-.env.local
-.DS_Store
-*.local
-
-# IDE / Editor specific
-.vscode/
-.idea/
-*.iml
-.project
-.classpath
-.settings/
-*.sublime-project
-*.sublime-workspace
-
-# macOS
-.DS_Store
-
-# Windows
-Thumbs.db
-
-# Testing
+.runtime/
 coverage/
-*.test.js
-*.test.ts
-*.spec.js
-*.spec.ts
 
-# Chrome Extensions
-*.crx
-*.user.js
-
-# Temporary files
-*.tmp
-
-# Ignore all files in the root directory except specific ones (e.g., for CI/CD)
-# Example: !.github/
-# Example: !README.md
-
-# Specific to browser extensions (if any are generated)
-*.zip
-*.crx.zip
-
-# Module specific ignores
-public/build/
+# Extension specific files
+# https://developer.chrome.com/docs/extensions/reference/api/storage/#storage-limits
+# https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea#usage_limits
+# Consider if any build artifacts need to be ignored. For extensions, this is typically minimal.
