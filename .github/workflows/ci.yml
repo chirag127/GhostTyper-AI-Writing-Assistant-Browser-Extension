@@ -1,75 +1,83 @@
-name: CI
+# .github/workflows/ci.yml
+# APEX TECHNICAL AUTHORITY CI PIPELINE (STANDARD 2026)
+# Project: GhostTyper-AI-Writing-Assistant-Browser-Extension
+# Purpose: Ensures code integrity, quality, and readiness for deployment through automated builds, linting, and testing.
 
-# Controls when the workflow will run
-# For more information see: https://docs.github.com/en/actions/using-workflows/on
+name: 'CI: Build, Lint & Test'
+
+# Ensures that only one workflow run is executed for a given PR or branch.
+# Automatically cancels any in-progress runs on the same branch when a new commit is pushed.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+      - 'develop'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+      - 'develop'
+    types: [opened, synchronize, reopened]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This job builds and tests the code
   build-and-test:
-    runs-on: ubuntu-latest
+    name: 'Node.js ${{ matrix.node-version }} on ${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read # Required for actions/checkout
 
     strategy:
       matrix:
-        node-version: ['18.x', '20.x']
+        os: [ubuntu-latest]
+        node-version: [20.x] # Use the current LTS version for stability and performance.
 
     steps:
-      - name: Checkout Repository
+      - name: '1. Checkout Repository'
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history for all branches and tags.
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: '2. Setup Node.js ${{ matrix.node-version }} Environment'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm' # Cache npm dependencies
-          cache-dependency-path: '**/package-lock.json'
+          cache: 'npm' # Leverages GitHub's caching for `npm` to speed up subsequent runs.
 
-      - name: Install Dependencies
-        run: npm ci
-        # Using 'npm ci' for faster, more reliable installations in CI environments
-        # It ensures that dependencies match the package-lock.json exactly.
+      - name: '3. Install Project Dependencies'
+        run: npm ci # Use `ci` for deterministic builds based on `package-lock.json`.
 
-      - name: Lint with Biome
-        run: npx @biomejs/biome format --check .
-        # This step ensures code is correctly formatted according to Biome standards.
+      - name: '4. Lint & Format Verification (Biome)'
+        run: npm run lint:check # Assumes a script like "biome check --apply-unsafe ."
 
-      - name: Lint with Biome (Code Style)
-        run: npx @biomejs/biome lint --apply --unsafe-ignore "no-unused-catch-binding" .
-        # This step applies Biome's linting rules and attempts to fix them. 
-        # "no-unused-catch-binding" is ignored as it's common in JS error handling.
+      - name: '5. Build Production Artifacts (Vite/WXT)'
+        run: npm run build # Assumes a standard `vite build` or `wxt build` script.
 
-      - name: Build Extension
-        run: npm run build --if-present
-        # This step executes the build script defined in package.json. 
-        # '--if-present' ensures it only runs if a 'build' script exists.
-        env:
-          NODE_ENV: production
+      - name: '6. Execute Unit & Integration Tests (Vitest)'
+        run: npm run test:unit # Assumes a script like "vitest run --coverage".
 
-      - name: Run Unit Tests with Vitest
-        run: npm test
-        # This executes the test suite using Vitest, as configured in package.json.
-        # Assumes 'npm test' is mapped to a Vitest command.
+      - name: '7. Upload Code Coverage to Codecov'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # The Codecov action automatically finds coverage reports.
+          # fail_ci_if_error: true # Recommended to enable after initial setup.
 
-      # Optional: E2E Tests with Playwright (if applicable)
-      # - name: Install Playwright Browsers
-      #   run: npx playwright install
-      # - name: Run E2E Tests with Playwright
-      #   run: npm run test:e2e # Assuming a script for E2E tests exists
-      #   env:
-      #     CI: true # Essential for Playwright to run correctly in CI
-
-      # Optional: Upload artifacts (e.g., build outputs)
-      # - name: Upload Build Artifact
+      # === OPTIONAL E2E TESTING (Playwright) ===
+      # Uncomment the following steps once E2E tests are configured.
+      # - name: '8. Install Playwright System Dependencies'
+      #   run: npx playwright install --with-deps
+      #
+      # - name: '9. Execute End-to-End Tests (Playwright)'
+      #   run: npm run test:e2e
+      #
+      # - name: '10. Upload Playwright Report on Failure'
+      #   if: failure()
       #   uses: actions/upload-artifact@v4
       #   with:
-      #     name: GhostTyper-Extension-Build
-      #     path: dist/ # Adjust path based on your build output directory
-
-      # Note: This CI setup is designed for a JavaScript/TypeScript browser extension. 
-      # For other stacks (e.g., Python, Rust), the steps would differ significantly.
-      # The current setup assumes standard npm build/test scripts.
+      #     name: playwright-report-${{ matrix.os }}
+      #     path: playwright-report/
+      #     retention-days: 7
