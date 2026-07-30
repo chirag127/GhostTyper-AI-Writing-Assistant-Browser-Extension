@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostTyper — Copilot for every text field</title>
+  <meta name="description" content="GhostTyper brings Copilot-style inline AI writing suggestions to any text field in your browser. Tab to accept. 100% client-side, 7 free providers.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">GhostTyper</span>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#providers">Providers</a>
+    <a href="#install">Install</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="https://github.com/chirag127/ghosttyper-bs-ext">GitHub</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="ghost-icon">&#128123;</div>
+  <h1>Copilot for every text field</h1>
+  <p class="sub">GhostTyper shows AI writing suggestions inline as you type — anywhere in your browser. Press Tab to accept. Zero backend. Zero telemetry.</p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="https://github.com/chirag127/ghosttyper-bs-ext/releases/latest" id="install">Download Extension</a>
+    <a class="btn btn-outline" href="https://github.com/chirag127/ghosttyper-bs-ext">View on GitHub</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Demo -->
+<div class="section">
+  <h2 class="section-title">See it in action</h2>
+  <div class="demo-wrap">
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Composing an email&hellip;</p>
+    <div class="mock-field">
+      <span class="mock-typed">Hi Sarah, I wanted to follow up on our meeting</span><span class="mock-cursor"></span><span class="mock-ghost"> to discuss the project timeline and next steps.</span>
+    </div>
+    <div class="mock-hint">
+      <span class="key-badge">Tab</span> accept &nbsp;&bull;&nbsp; <span class="key-badge">Esc</span> dismiss
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Features -->
+<div class="section" id="features">
+  <h2 class="section-title">Why GhostTyper</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#9889;</div>
+      <h3>Works everywhere</h3>
+      <p>Injects into every text input, textarea, and contenteditable field on any website — Gmail, Notion, Twitter, forms, code editors.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128274;</div>
+      <h3>100% client-side</h3>
+      <p>No backend server. Text goes directly from your browser to your chosen AI provider. Nothing passes through our servers because there are none.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127381;</div>
+      <h3>Zero-config default</h3>
+      <p>Pollinations is the default provider — no API key, no sign-up, works immediately after installation.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128295;</div>
+      <h3>7 providers</h3>
+      <p>Pollinations, Groq, Cerebras, Gemini, OpenRouter, Mistral, or any OpenAI-compatible custom endpoint.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128683;</div>
+      <h3>Site allow/deny list</h3>
+      <p>Block GhostTyper on specific domains — password managers, banking sites, or anywhere you prefer no suggestions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127775;</div>
+      <h3>MV3 native</h3>
+      <p>Built on Manifest V3 — the modern extension standard. No deprecated APIs. Compatible with Chrome, Edge, Brave, Arc.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- How it works -->
+<div class="section">
+  <h2 class="section-title">How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Install the extension</h3>
+        <p>Download the release zip, unzip it, and load unpacked in Chrome (or compatible browser). No store required.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Start typing</h3>
+        <p>GhostTyper detects your text fields automatically. After a short debounce (default 500ms), it fetches a suggestion from your provider.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Ghost text appears</h3>
+        <p>The suggestion renders inline in grey — just like GitHub Copilot. Keep typing to dismiss or press Tab to accept instantly.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Choose your provider</h3>
+        <p>Open Settings to switch provider, add an API key, or point GhostTyper at a custom OpenAI-compatible endpoint.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Provider table -->
+<div class="section" id="providers">
+  <h2 class="section-title">Provider comparison</h2>
+  <div class="provider-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Free tier</th>
+          <th>Key required</th>
+          <th>Default model</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pollinations</strong> <span class="badge badge-default">Default</span></td>
+          <td><span class="badge badge-free">Free</span></td>
+          <td>No</td>
+          <td>openai</td>
+          <td>Zero-config. Works out of the box.</td>
+        </tr>
+        <tr>
+          <td>Groq</td>
+          <td><span class="badge badge-free">Free tier</span></td>
+          <td><span class="badge badge-key">Yes</span></td>
+          <td>llama-3.3-70b-versatile</td>
+          <td>Fast inference. Free at console.groq.com</td>
+        </tr>
+        <tr>
+          <td>Cerebras</td>
+          <td><span class="badge badge-free">Free tier</span></td>
+          <td><span class="badge badge-key">Yes</span></td>
+          <td>llama-3.3-70b</td>
+          <td>Ultra-low latency. cloud.cerebras.ai</td>
+        </tr>
+        <tr>
+          <td>Google Gemini</td>
+          <td><span class="badge badge-free">Free tier</span></td>
+          <td><span class="badge badge-key">Yes</span></td>
+          <td>gemini-2.0-flash</td>
+          <td>aistudio.google.com — generous free quota</td>
+        </tr>
+        <tr>
+          <td>OpenRouter</td>
+          <td><span class="badge badge-free">Free models</span></td>
+          <td><span class="badge badge-key">Yes</span></td>
+          <td>deepseek/deepseek-r1:free</td>
+          <td>Access many free models. openrouter.ai</td>
+        </tr>
+        <tr>
+          <td>Mistral</td>
+          <td><span class="badge badge-free">Free tier</span></td>
+          <td><span class="badge badge-key">Yes</span></td>
+          <td>mistral-small-latest</td>
+          <td>console.mistral.ai</td>
+        </tr>
+        <tr>
+          <td>Custom</td>
+          <td>—</td>
+          <td>Optional</td>
+          <td>Your choice</td>
+          <td>Any OpenAI-compatible API endpoint</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<div class="section">
+  <h2 class="section-title">FAQ</h2>
+  <div class="faq">
+    <details>
+      <summary>Does GhostTyper work on all websites?</summary>
+      <p>Yes. GhostTyper injects into standard input, textarea, and contenteditable fields on any site. A few sites (like password fields) are intentionally excluded. You can also add sites to your personal block list in Settings.</p>
+    </details>
+    <details>
+      <summary>Is my text sent to anyone other than my chosen provider?</summary>
+      <p>No. GhostTyper has no backend. The text before your cursor is sent directly from your browser to your chosen AI provider. There is no intermediate server. See <a href="privacy.html">Privacy Policy</a> for full details.</p>
+    </details>
+    <details>
+      <summary>How do I get an API key for Groq / Gemini / etc.?</summary>
+      <p>Each provider has a free console. Visit console.groq.com, aistudio.google.com, cloud.cerebras.ai, openrouter.ai, or console.mistral.ai. Sign up free, generate an API key, and paste it in GhostTyper Settings.</p>
+    </details>
+    <details>
+      <summary>Will it work with Pollinations forever for free?</summary>
+      <p>Pollinations is a community-supported free AI inference service. GhostTyper uses it as the zero-config default. If it becomes unavailable, switch to any other provider in Settings.</p>
+    </details>
+    <details>
+      <summary>Which browsers are supported?</summary>
+      <p>Any Chromium-based browser that supports MV3: Chrome 109+, Edge 109+, Brave, Arc, Opera, Vivaldi. Firefox support is not yet available (MV3 API surface differs).</p>
+    </details>
+  </div>
+</div>
+
+<!-- Install CTA -->
+<div class="install-cta">
+  <h2>Ready to type faster?</h2>
+  <p>Download GhostTyper and get AI suggestions in every text field — free, client-side, no signup.</p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="https://github.com/chirag127/ghosttyper-bs-ext/releases/latest">Download v2.0.0</a>
+    <a class="btn btn-outline" href="privacy.html">Privacy Policy</a>
+  </div>
+</div>
+
+<footer>
+  <p>
+    GhostTyper &mdash; MIT License &mdash;
+    <a href="https://github.com/chirag127/ghosttyper-bs-ext">GitHub</a> &mdash;
+    <a href="privacy.html">Privacy</a> &mdash;
+    <a href="terms.html">Terms</a> &mdash;
+    <a href="about.html">About</a> &mdash;
+    <a href="contact.html">Contact</a>
+  </p>
+</footer>
+
+</body>
+</html>

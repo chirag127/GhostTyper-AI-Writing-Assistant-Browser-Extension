@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "GhostTyper",
-  "version": "1.0.0",
-  "description": "Real-time, inline AI writing suggestions as you type in web forms and text fields",
+  "version": "2.0.0",
+  "description": "Copilot-style inline AI writing suggestions in any text field. Tab to accept. 100% client-side, 7 providers.",
   "icons": {
     "16": "assets/icon16.png",
     "48": "assets/icon48.png",
@@ -33,7 +33,13 @@
     "scripting"
   ],
   "host_permissions": [
-    "http://localhost:3000/*"
+    "https://text.pollinations.ai/*",
+    "https://api.groq.com/*",
+    "https://api.cerebras.ai/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://openrouter.ai/*",
+    "https://api.mistral.ai/*",
+    "*://*/*"
   ],
   "options_page": "settings.html"
 }

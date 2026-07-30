@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — GhostTyper</title>
+  <meta name="description" content="GhostTyper privacy policy. 100% client-side, no backend, no telemetry.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav>
+  <a class="nav-brand" href="index.html">GhostTyper</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#providers">Providers</a>
+    <a href="terms.html">Terms</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="section" style="max-width:800px">
+  <h1 style="font-size:2rem;font-weight:800;margin-bottom:2rem">Privacy Policy</h1>
+  <p style="color:var(--muted);margin-bottom:2rem">Last updated: July 2026</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Architecture — no backend</h2>
+  <p>GhostTyper has no servers, no analytics endpoint, and no telemetry system. There is no backend. The extension runs entirely inside your browser.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">What text is sent and where</h2>
+  <p>When GhostTyper fetches a suggestion, it sends the text <em>before your cursor</em> (the "context prefix") directly from your browser to the AI provider you have configured in Settings. That request goes browser → provider. It does not pass through any GhostTyper-controlled server.</p>
+  <ul style="margin:1rem 0 1rem 1.5rem;color:var(--muted);line-height:2">
+    <li>Default provider: <strong>Pollinations</strong> (text.pollinations.ai)</li>
+    <li>Optional: Groq, Cerebras, Google Gemini, OpenRouter, Mistral, or any custom OpenAI-compatible endpoint you supply</li>
+    <li>Each provider's own privacy policy governs how they handle requests</li>
+  </ul>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Sensitive fields — always excluded</h2>
+  <p>GhostTyper <strong>never reads or sends</strong> text from:</p>
+  <ul style="margin:1rem 0 1rem 1.5rem;color:var(--muted);line-height:2">
+    <li><code>input[type=password]</code> — password fields</li>
+    <li>Any input with <code>autocomplete</code> set to a credit-card attribute (<code>cc-number</code>, <code>cc-csc</code>, <code>cc-exp</code>, <code>cc-name</code>, <code>cc-type</code>, etc.)</li>
+    <li>Hidden inputs (<code>type=hidden</code>)</li>
+    <li>Inputs whose <code>name</code> or <code>id</code> matches common credit-card patterns</li>
+  </ul>
+  <p>This exclusion is enforced in the content script before any network call is made — it is not configurable and cannot be bypassed by settings.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Local storage</h2>
+  <p>Settings (provider choice, API key, site list, delay) are stored in <code>chrome.storage.local</code> — your browser, your device. They are never uploaded or synced by GhostTyper.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">API keys</h2>
+  <p>If you add an API key, it is stored locally and included only in requests to your chosen provider. It is never logged, transmitted to a third party, or stored outside your browser.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Site allow/deny list</h2>
+  <p>You can block GhostTyper on specific domains via Settings. On blocked domains, no text is ever read or sent.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Telemetry and analytics</h2>
+  <p>None. GhostTyper collects no usage statistics, error reports, or identifiers of any kind.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Open source</h2>
+  <p>GhostTyper is MIT-licensed. You can read every line of code at <a href="https://github.com/chirag127/ghosttyper-bs-ext">github.com/chirag127/ghosttyper-bs-ext</a>.</p>
+
+  <h2 style="font-size:1.2rem;font-weight:700;margin:2rem 0 0.75rem">Contact</h2>
+  <p>Questions? Open a GitHub issue or see the <a href="contact.html">contact page</a>.</p>
+</div>
+
+<footer>
+  <p>GhostTyper &mdash; MIT &mdash; <a href="index.html">Home</a> &mdash; <a href="terms.html">Terms</a> &mdash; <a href="contact.html">Contact</a></p>
+</footer>
+</body>
+</html>

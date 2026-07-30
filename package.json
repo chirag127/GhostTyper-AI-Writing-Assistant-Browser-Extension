@@ -1,25 +1,20 @@
 {
-  "name": "ghosttyper",
-  "version": "1.0.0",
-  "description": "GhostTyper - Keyboard Ghostwriter: Real-time, inline AI writing suggestions",
+  "name": "ghosttyper-bs-ext",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "GhostTyper — Copilot-style inline AI writing suggestions in any text field. 100% client-side, 7 providers.",
   "scripts": {
-    "start:backend": "cd backend && npm start",
-    "dev:backend": "cd backend && npm run dev",
-    "install:backend": "cd backend && npm install",
-    "build:extension": "cd extension && zip -r ../ghosttyper-extension.zip *",
-    "test:backend": "cd backend && npm test"
+    "test": "node --test tests/",
+    "test:unit": "node --test tests/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chirag127/GhostTyper---Keyboard-Ghostwriter.git"
+    "url": "git+https://github.com/chirag127/ghosttyper-bs-ext.git"
   },
   "author": "Chirag Singhal",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chirag127/GhostTyper---Keyboard-Ghostwriter/issues"
+    "url": "https://github.com/chirag127/ghosttyper-bs-ext/issues"
   },
-  "homepage": "https://github.com/chirag127/GhostTyper---Keyboard-Ghostwriter#readme",
-  "dependencies": {
-    "sharp": "^0.34.5"
-  }
+  "homepage": "https://ghosttyper-bs-ext.oriz.in"
 }

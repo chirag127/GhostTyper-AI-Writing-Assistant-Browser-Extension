@@ -12,12 +12,12 @@
       <img src="assets/ghost-logo.svg" alt="GhostTyper Logo" class="logo">
       <h1>GhostTyper Settings</h1>
     </div>
-    
+
     <div class="content">
       <form id="settingsForm">
         <div class="section">
-          <h2>General Settings</h2>
-          
+          <h2>General</h2>
+
           <div class="form-group">
             <label class="toggle-label">
               <span>Enable GhostTyper</span>
@@ -26,29 +26,18 @@
                 <span class="toggle-slider"></span>
               </div>
             </label>
-            <p class="help-text">Globally enable or disable GhostTyper</p>
+            <p class="help-text">Globally enable or disable inline suggestions</p>
           </div>
-          
+
           <div class="form-group">
-            <label for="apiKey">Gemini API Key</label>
-            <div class="api-key-input">
-              <input type="password" id="apiKey" placeholder="Enter your Gemini API key">
-              <button type="button" id="toggleApiKey" class="toggle-api-key">Show</button>
-            </div>
-            <p class="help-text">Your API key is stored locally and only sent securely to the Gemini API</p>
+            <label for="triggerDelay">Suggestion Delay (ms)</label>
+            <input type="range" id="triggerDelay" min="50" max="2000" step="50">
+            <div class="range-value"><span id="triggerDelayValue">150</span> ms</div>
+            <p class="help-text">Wait after typing stops before fetching suggestion</p>
           </div>
-          
+
           <div class="form-group">
-            <label for="triggerDelay">Suggestion Trigger Delay (ms)</label>
-            <input type="range" id="triggerDelay" min="100" max="2000" step="100">
-            <div class="range-value">
-              <span id="triggerDelayValue">500</span> ms
-            </div>
-            <p class="help-text">How long to wait after typing stops before generating a suggestion</p>
-          </div>
-          
-          <div class="form-group">
-            <label>Suggestion Presentation Mode</label>
+            <label>Presentation Mode</label>
             <div class="radio-group">
               <label class="radio-label">
                 <input type="radio" name="presentationMode" value="inline" checked>
@@ -63,47 +52,78 @@
                 <span>Side Panel</span>
               </label>
             </div>
-            <p class="help-text">How suggestions are displayed</p>
           </div>
         </div>
-        
+
         <div class="section">
-          <h2>Site Settings</h2>
-          
+          <h2>AI Provider</h2>
+
+          <div class="form-group">
+            <label for="provider">Provider</label>
+            <select id="provider">
+              <option value="pollinations">Pollinations — free, no key needed</option>
+              <option value="groq">Groq — free tier, key required</option>
+              <option value="cerebras">Cerebras — free tier, key required</option>
+              <option value="gemini">Google Gemini — free tier, key required</option>
+              <option value="openrouter">OpenRouter — free models available</option>
+              <option value="mistral">Mistral — free tier, key required</option>
+              <option value="custom">Custom (OpenAI-compatible)</option>
+            </select>
+            <p class="help-text">Pollinations works out of the box with no configuration</p>
+          </div>
+
+          <div class="form-group" id="apiKeyGroup">
+            <label for="apiKey">API Key</label>
+            <div class="api-key-input">
+              <input type="password" id="apiKey" placeholder="Paste your API key here">
+              <button type="button" id="toggleApiKey" class="toggle-api-key">Show</button>
+            </div>
+            <p class="help-text">Stored locally in your browser only</p>
+          </div>
+
+          <div class="form-group">
+            <label for="model">Model (optional)</label>
+            <input type="text" id="model" placeholder="Leave blank for provider default">
+            <p class="help-text">Override the default model for this provider</p>
+          </div>
+
+          <div class="form-group" id="customBaseUrlGroup" style="display:none">
+            <label for="customBaseUrl">Base URL</label>
+            <input type="text" id="customBaseUrl" placeholder="https://your-openai-compatible-api.com/v1">
+            <p class="help-text">Any OpenAI-compatible API endpoint</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Site List</h2>
+
           <div class="form-group">
             <label for="siteList">Blocked Sites</label>
-            <textarea id="siteList" placeholder="Enter one domain per line, e.g. example.com"></textarea>
-            <p class="help-text">GhostTyper will be disabled on these sites. Use * for wildcards, e.g. *.example.com</p>
+            <textarea id="siteList" placeholder="example.com&#10;*.social-network.com"></textarea>
+            <p class="help-text">GhostTyper is disabled on these domains. One per line, * wildcard supported.</p>
           </div>
         </div>
-        
+
         <div class="section">
-          <h2>Advanced Settings</h2>
-          
-          <div class="form-group">
-            <label for="backendUrl">Backend URL</label>
-            <input type="text" id="backendUrl" placeholder="http://localhost:3000">
-            <p class="help-text">URL of the GhostTyper backend service</p>
-          </div>
-          
+          <h2>Data</h2>
           <div class="form-group">
             <button type="button" id="clearDataBtn" class="danger-button">Clear All Data</button>
-            <p class="help-text">Remove all stored data including your API key</p>
+            <p class="help-text">Removes API key and all stored settings</p>
           </div>
         </div>
-        
+
         <div class="form-actions">
           <button type="submit" id="saveBtn">Save Settings</button>
           <div id="saveStatus" class="save-status"></div>
         </div>
       </form>
     </div>
-    
+
     <div class="footer">
-      <p>GhostTyper v1.0.0 | <a href="https://github.com/chirag127/GhostTyper---Keyboard-Ghostwriter" target="_blank">GitHub</a></p>
+      <p>GhostTyper v2.0.0 | <a href="https://github.com/chirag127/ghosttyper-bs-ext" target="_blank">GitHub</a></p>
     </div>
   </div>
-  
+
   <script src="js/settings.js" type="module"></script>
 </body>
 </html>

@@ -48,5 +48,6 @@ coverage/
 
 # Extension specific files
 # https://developer.chrome.com/docs/extensions/reference/api/storage/#storage-limits
-# https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea#usage_limits
-# Consider if any build artifacts need to be ignored. For extensions, this is typically minimal.
+# Consider if any build artifacts need to be ignored.
+*.zip
+ghosttyper.zip

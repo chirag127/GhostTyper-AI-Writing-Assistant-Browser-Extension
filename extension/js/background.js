@@ -1,170 +1,129 @@
 /**
  * Background Service Worker for GhostTyper
- * 
- * This script handles communication between content scripts and the backend,
- * manages extension state, and processes API requests.
+ * Handles API calls, LRU cache, and silent-disable on persistent errors.
  */
 
-// Default backend URL
-const DEFAULT_BACKEND_URL = 'http://localhost:3000';
+import { getCompletion } from "./ai-providers.js";
 
-// Default settings
 const DEFAULT_SETTINGS = {
   isEnabled: true,
-  apiKey: '',
+  provider: "pollinations",
+  apiKey: "",
+  model: "",
+  customBaseUrl: "",
   siteList: [],
-  triggerDelay: 500,
-  presentationMode: 'inline'
+  triggerDelay: 150,
+  presentationMode: "inline",
 };
 
-// Initialize extension state
+// LRU cache: prefix -> completion (max 64 entries)
+const CACHE_MAX = 64;
+const cache = new Map();
+
+function cacheGet(key) {
+  const val = cache.get(key);
+  if (val !== undefined) {
+    // refresh recency
+    cache.delete(key);
+    cache.set(key, val);
+  }
+  return val;
+}
+
+function cacheSet(key, val) {
+  if (cache.size >= CACHE_MAX) {
+    cache.delete(cache.keys().next().value);
+  }
+  cache.set(key, val);
+}
+
+// Silent-disable: track consecutive errors per tab session
+const errorCounts = new Map();
+const ERROR_THRESHOLD = 3;
+
+function markError(tabId) {
+  errorCounts.set(tabId, (errorCounts.get(tabId) ?? 0) + 1);
+}
+function resetError(tabId) {
+  errorCounts.delete(tabId);
+}
+function isSilenced(tabId) {
+  return (errorCounts.get(tabId) ?? 0) >= ERROR_THRESHOLD;
+}
+
 chrome.runtime.onInstalled.addListener(async () => {
-  // Set default settings if not already set
-  const settings = await chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS));
-  const newSettings = { ...DEFAULT_SETTINGS, ...settings };
-  await chrome.storage.local.set(newSettings);
-  
-  // Set badge based on enabled state
-  updateBadge(newSettings.isEnabled);
+  const stored = await chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS));
+  await chrome.storage.local.set({ ...DEFAULT_SETTINGS, ...stored });
+  updateBadge(stored.isEnabled ?? DEFAULT_SETTINGS.isEnabled);
 });
 
-// Listen for messages from content scripts
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local") {
+    if (changes.isEnabled) updateBadge(changes.isEnabled.newValue);
+    // Reset silence on provider change
+    if (changes.provider) errorCounts.clear();
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'GET_SETTINGS') {
-    // Get settings and send back to content script
-    chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS), (settings) => {
-      sendResponse({ settings: { ...DEFAULT_SETTINGS, ...settings } });
+  if (message.type === "GET_SETTINGS") {
+    chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS), (stored) => {
+      sendResponse({ settings: { ...DEFAULT_SETTINGS, ...stored } });
     });
-    return true; // Keep the message channel open for async response
+    return true;
   }
-  
-  if (message.type === 'GENERATE_SUGGESTION') {
-    // Generate suggestion using the backend
-    generateSuggestion(message.context)
-      .then(suggestion => {
+
+  if (message.type === "GENERATE_SUGGESTION") {
+    const tabId = sender.tab?.id ?? -1;
+
+    // Silent-disable: too many consecutive errors this session
+    if (isSilenced(tabId)) {
+      sendResponse({ success: false, silent: true });
+      return true;
+    }
+
+    const prefix = message.context;
+
+    // Cache hit
+    const cached = cacheGet(prefix);
+    if (cached !== undefined) {
+      sendResponse({ success: true, suggestion: cached });
+      return true;
+    }
+
+    chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS), async (stored) => {
+      const settings = { ...DEFAULT_SETTINGS, ...stored };
+      try {
+        const suggestion = await getCompletion(prefix, settings);
+        cacheSet(prefix, suggestion);
+        resetError(tabId);
         sendResponse({ success: true, suggestion });
-      })
-      .catch(error => {
-        console.error('Error generating suggestion:', error);
-        sendResponse({ success: false, error: error.message });
-        
-        // Update badge to show error
-        chrome.action.setBadgeText({ text: '!' });
-        chrome.action.setBadgeBackgroundColor({ color: '#F44336' });
-        
-        // Reset badge after 5 seconds
-        setTimeout(() => {
-          chrome.storage.local.get('isEnabled', ({ isEnabled }) => {
-            updateBadge(isEnabled);
-          });
-        }, 5000);
-      });
-    return true; // Keep the message channel open for async response
-  }
-  
-  if (message.type === 'RECORD_TELEMETRY') {
-    // Record telemetry data
-    recordTelemetry(message.data)
-      .then(() => {
-        sendResponse({ success: true });
-      })
-      .catch(error => {
-        console.error('Error recording telemetry:', error);
-        sendResponse({ success: false, error: error.message });
-      });
-    return true; // Keep the message channel open for async response
+      } catch (err) {
+        console.warn("[GhostTyper] provider error:", err.message);
+        markError(tabId);
+        sendResponse({ success: false, error: err.message, silent: isSilenced(tabId) });
+        if (!isSilenced(tabId)) {
+          chrome.action.setBadgeText({ text: "!" });
+          chrome.action.setBadgeBackgroundColor({ color: "#F44336" });
+          setTimeout(
+            () =>
+              chrome.storage.local.get("isEnabled", ({ isEnabled }) =>
+                updateBadge(isEnabled)
+              ),
+            5000
+          );
+        }
+      }
+    });
+    return true;
   }
 });
 
-// Listen for changes to storage
-chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === 'local' && changes.isEnabled) {
-    // Update badge when enabled state changes
-    updateBadge(changes.isEnabled.newValue);
-  }
-});
-
-/**
- * Update the extension badge based on enabled state
- * 
- * @param {boolean} isEnabled - Whether the extension is enabled
- */
 function updateBadge(isEnabled) {
   if (isEnabled) {
-    chrome.action.setBadgeText({ text: '' });
+    chrome.action.setBadgeText({ text: "" });
   } else {
-    chrome.action.setBadgeText({ text: 'OFF' });
-    chrome.action.setBadgeBackgroundColor({ color: '#9E9E9E' });
-  }
-}
-
-/**
- * Generate a suggestion using the backend
- * 
- * @param {string} context - The text context to generate a suggestion from
- * @returns {Promise<string>} - The generated suggestion
- */
-async function generateSuggestion(context) {
-  try {
-    // Get API key from storage
-    const { apiKey } = await chrome.storage.local.get('apiKey');
-    
-    if (!apiKey) {
-      throw new Error('API key not set. Please set your Gemini API key in the extension settings.');
-    }
-    
-    // Get backend URL from storage or use default
-    const { backendUrl = DEFAULT_BACKEND_URL } = await chrome.storage.local.get('backendUrl');
-    
-    // Make request to backend
-    const response = await fetch(`${backendUrl}/api/suggestions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ context, apiKey })
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Error: ${response.status}`);
-    }
-    
-    // Read the response text
-    const suggestion = await response.text();
-    return suggestion;
-  } catch (error) {
-    console.error('Error generating suggestion:', error);
-    throw error;
-  }
-}
-
-/**
- * Record telemetry data
- * 
- * @param {Object} data - The telemetry data to record
- * @returns {Promise<void>}
- */
-async function recordTelemetry(data) {
-  try {
-    // Get backend URL from storage or use default
-    const { backendUrl = DEFAULT_BACKEND_URL } = await chrome.storage.local.get('backendUrl');
-    
-    // Make request to backend
-    const response = await fetch(`${backendUrl}/api/telemetry`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Error: ${response.status}`);
-    }
-  } catch (error) {
-    console.error('Error recording telemetry:', error);
-    throw error;
+    chrome.action.setBadgeText({ text: "OFF" });
+    chrome.action.setBadgeBackgroundColor({ color: "#9E9E9E" });
   }
 }
